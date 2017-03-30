@@ -43,7 +43,6 @@ int Nombres[NOMBRE_AFFICHEURS] = {1, 3, 6, 8}; //Nombres à afficher sur chaque 
 byte Afficheur = 0; //Numéro du dernier afficheur rafraichi
 unsigned long DernierRafraichissement = 0; //Utilisé avec millis()
 
-
 void setup() {  
   int i = 0;
   int j = 0;
@@ -51,11 +50,7 @@ void setup() {
   for (i = 0; i < NOMBRE_AFFICHEURS; i++)
   {
     pinMode(Anodes[i], OUTPUT);
-  }
-
-  // Entrées 74LS47 configurées en sortie
-  for (i = 0; i < NOMBRE_AFFICHEURS; i++)
-  {
+    // Entrées 74LS47 configurées en sortie
     for (j = 0; i < NBR_ENTREE_LS; i++)
     {
       pinMode(EntreeLS[i][j], OUTPUT);

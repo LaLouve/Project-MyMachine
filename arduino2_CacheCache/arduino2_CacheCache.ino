@@ -52,11 +52,7 @@ void setup() {
   for (i = 0; i < NOMBRE_AFFICHEURS; i++)
   {
     pinMode(Anodes[i], OUTPUT);
-  }
-
-  // Entrées 74LS47 configurées en sortie
-  for (i = 0; i < NOMBRE_AFFICHEURS; i++)
-  {
+    // Entrées 74LS47 configurées en sortie
     for (j = 0; i < NBR_ENTREE_LS; i++)
     {
       pinMode(EntreeLS[i][j], OUTPUT);
