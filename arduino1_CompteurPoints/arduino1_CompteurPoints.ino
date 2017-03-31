@@ -30,7 +30,7 @@
 #define BOUTON_PLUS_GAUCHE    20
 #define BOUTON_MOINS_GAUCHE   21
 #define BOUTON_RESET          3
-#define DELAI_REBONDS         1000
+#define DELAI_REBONDS         1000  //En milisecondes
 
 //PARAMETRAGE AFFICHEURS 7 SEGMENTS
 #define NOMBRE_AFFICHEURS     4
@@ -48,9 +48,16 @@ int EntreeLS[NOMBRE_AFFICHEURS][NBR_ENTREE_LS] = {{22, 23, 24, 25},  // pin util
   
 //VARIABLES UTILISÉE POUR LES AFFICHEURS
 int Anodes[NOMBRE_AFFICHEURS] = {38, 39, 40, 41};
-int Nombres[NOMBRE_AFFICHEURS] = {1, 3, 6, 8}; //Nombres à afficher sur chaque afficheur
+int Nombres[NOMBRE_AFFICHEURS] = {0, 0, 0, 0}; //Nombres à afficher sur chaque afficheur
 byte Afficheur = 0; //Numéro du dernier afficheur rafraichi
 unsigned long DernierRafraichissement = 0; //Utilisé avec millis()
+
+//VARIABLES UTILISÉE POUR LES BOUTONS
+unsigned long DernierAppuisBouton = 0;
+
+//AUTRES VARIABLES
+int NombreGauche = 0;
+int NombreDroite = 0;
 
 
 void setup() {  
@@ -66,12 +73,50 @@ void setup() {
       pinMode(EntreeLS[i][j], OUTPUT);
     }
   }
+
+  // Configuration des boutons
+  pinMode(BOUTON_PLUS_DROITE, INPUT_PULLUP);
+  pinMode(BOUTON_MOINS_DROITE, INPUT_PULLUP);
+  pinMode(BOUTON_PLUS_GAUCHE, INPUT_PULLUP);
+  pinMode(BOUTON_MOINS_GAUCHE, INPUT_PULLUP);
+  pinMode(BOUTON_RESET, INPUT_PULLUP);
+
+  // Configuration des Interruptions
+  attachInterrupt(digitalPinToInterrupt(18), AppuisPlusDroite, FALLING);
+  attachInterrupt(digitalPinToInterrupt(19), AppuisMoinsDroite, FALLING);
+  attachInterrupt(digitalPinToInterrupt(20), AppuisPlusGauche, FALLING);
+  attachInterrupt(digitalPinToInterrupt(21), AppuisMoinsGauche, FALLING);
+  attachInterrupt(digitalPinToInterrupt(18), AppuisReset, FALLING);
+
 }
 
 void loop() {
   RafraichirAffichage();
 }
 
+void TransformerNombre ()
+{
+  int tmpDroite = NombreDroite;
+  int tmpGauche = NombreGauche;
+  int i = 0;
+
+  //Comptage des dizaines
+  while (tmpGauche >= 10)
+  {
+    tmpGauche -= 10;
+    Nombres[0];
+  }
+  
+  while (tmpDroite >= 10)
+  {
+    tmpDroite -= 10;
+    Nombres[2];
+  }
+  
+  //Comptage des unités
+  Nombres[1] = tmpGauche;
+  Nombres[3] = tmpDroite;
+}
 
 void RafraichirAffichage()
 {
@@ -93,7 +138,48 @@ void RafraichirAffichage()
   }
 }
 
+void AppuisPlusDroite ()
+{
+  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
+  {
+    NombreDroite++;
+    TransformerNombre();
+  }
+}
 
+void AppuisMoinsDroite ()
+{
+  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
+  {
+    NombreDroite--;
+    TransformerNombre();
+  }
+}
 
+void AppuisPlusGauche ()
+{
+  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
+  {
+    NombreGauche++;
+    TransformerNombre();
+  }
+}
 
+void AppuisMoinsGauche ()
+{
+  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
+  {
+    NombreGauche--;
+    TransformerNombre();
+  }
+}
 
+void AppuisReset()
+{
+  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
+  {
+    NombreGauche = 0;
+    NombreDroite = 0;
+    TransformerNombre();
+  }
+}
