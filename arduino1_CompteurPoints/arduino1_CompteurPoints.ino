@@ -30,7 +30,7 @@
 #define BOUTON_PLUS_GAUCHE    20
 #define BOUTON_MOINS_GAUCHE   21
 #define BOUTON_RESET          3
-#define DELAI_REBONDS         1000  //En milisecondes
+#define DELAI_REBONDS         100  //En milisecondes
 
 //PARAMETRAGE AFFICHEURS 7 SEGMENTS
 #define NOMBRE_AFFICHEURS     4
@@ -52,7 +52,7 @@ int Nombres[NOMBRE_AFFICHEURS] = {0, 0, 0, 0}; //Nombres à afficher sur chaque 
 byte Afficheur = 0; //Numéro du dernier afficheur rafraichi
 unsigned long DernierRafraichissement = 0; //Utilisé avec millis()
 
-//VARIABLES UTILISÉE POUR LES BOUTONS
+//VARIABLES UTILISÉES POUR LES BOUTONS
 unsigned long DernierAppuisBouton = 0;
 
 //AUTRES VARIABLES
@@ -61,6 +61,8 @@ int NombreDroite = 0;
 
 
 void setup() {  
+  /*Serial.begin(9600);
+  Serial.print("\nAllumage"); */
   int i = 0;
   int j = 0;
   // Anodes configurés en sortie
@@ -86,7 +88,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(19), AppuisMoinsDroite, FALLING);
   attachInterrupt(digitalPinToInterrupt(20), AppuisPlusGauche, FALLING);
   attachInterrupt(digitalPinToInterrupt(21), AppuisMoinsGauche, FALLING);
-  attachInterrupt(digitalPinToInterrupt(18), AppuisReset, FALLING);
+  attachInterrupt(digitalPinToInterrupt(3), AppuisReset, FALLING);
 
 }
 
@@ -100,22 +102,34 @@ void TransformerNombre ()
   int tmpGauche = NombreGauche;
   int i = 0;
 
+  /*
+  Serial.print("\nNouveau Nombre! G|D ");
+  Serial.print(NombreGauche);
+  Serial.print(" | ");
+  Serial.print(NombreDroite); */
   //Comptage des dizaines
   while (tmpGauche >= 10)
   {
     tmpGauche -= 10;
-    Nombres[0];
+    Nombres[0] = Nombres[0] + 1;
   }
   
   while (tmpDroite >= 10)
   {
     tmpDroite -= 10;
-    Nombres[2];
+    Nombres[2] = Nombres[2] + 1;
   }
   
   //Comptage des unités
   Nombres[1] = tmpGauche;
   Nombres[3] = tmpDroite;
+
+  /*Serial.print("\nNombre transformé! ");
+  Serial.print(Nombres[0]);
+  Serial.print(Nombres[1]);
+  Serial.print(" ");
+  Serial.print(Nombres[2]);
+  Serial.print(Nombres[3]);*/
 }
 
 void RafraichirAffichage()

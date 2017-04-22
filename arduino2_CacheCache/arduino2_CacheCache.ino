@@ -21,8 +21,16 @@
  * THE SOFTWARE.
  * 
  * Projet My Machine
- * arduino n°1: Compteur de Points
+ * arduino n°2: cache-cache
  */
+
+//PARAMETRAGE BOUTONS
+#define BOUTON_PLUS     18    //Pin utilisée par le bouton
+#define BOUTON_MOINS    19
+#define BOUTON_START    20
+#define BOUTON_RESET    21
+#define BOUTON_BUZZ     3
+#define DELAI_REBONDS   100   //En millisencondes
 
 //PARAMETRAGE AFFICHEURS 7 SEGMENTS
 #define NOMBRE_AFFICHEURS     4
@@ -30,6 +38,10 @@
 
 //PARAMETRAGE 74LS47
 #define NBR_ENTREE_LS         4
+
+//PARAMETRAGE AUTRE
+#define SECONDES_DECOMPTE     30
+#define DELAI_SECONDE         1000
 
 //VARAIBLES UTILISÉES PAR LES 74LS47
 int EntreeLS[NOMBRE_AFFICHEURS][NBR_ENTREE_LS] = {{22, 23, 24, 25},  // pin utilisées par les 74ls47
@@ -43,6 +55,15 @@ int Anodes[NOMBRE_AFFICHEURS] = {38, 39, 40, 41};
 int Nombres[NOMBRE_AFFICHEURS] = {1, 3, 6, 8}; //Nombres à afficher sur chaque afficheur
 byte Afficheur = 0; //Numéro du dernier afficheur rafraichi
 unsigned long DernierRafraichissement = 0; //Utilisé avec millis()
+
+//VARIABLES UTILISÉES POUR LES BOUTONS
+unsigned long DernierAppuisBouton = 0;
+boolean start = false;
+
+//AUTRES VARIABLES
+int NombreEleve = 0;       //Nombre à afficher sur la partie gauche
+int SecondesDecompte = SECONDES_DECOMPTE; //Nombre à afficher sur la partie droite
+unsigned long DerniereSeconde = 0; 
 
 
 void setup() {  
@@ -62,6 +83,59 @@ void setup() {
 
 void loop() {
   RafraichirAffichage();
+
+  if (start)
+  {
+    if ((millis() - DerniereSeconde) > DELAI_SECONDE)
+    {
+      SecondesDecompte --;
+      TransformerNombre(SecondesDecompte, 1);
+    }
+  }
+}
+
+void TransformerNombre (int aNombre, byte aAfficheur)
+{
+  int tmpNombre = aNombre;
+  int i = 0;
+
+  /*
+  Serial.print("\nNouveau Nombre! G|D ");
+  Serial.print(NombreGauche);
+  Serial.print(" | ");
+  Serial.print(NombreDroite); */
+  //Comptage des dizaines
+  while (tmpNombre >= 10)
+  {
+    tmpNombre -= 10;
+    
+    if (aAfficheur == 0)
+    {
+      Nombres[0] = Nombres[0] + 1;
+    }
+    else
+    {
+      Nombres[2] = Nombres[2] + 1;
+    }
+    
+  }
+  
+  //Comptage des unités
+  if (aAfficheur == 0)
+  {
+    Nombres[1] =  tmpNombre;
+  }
+  else
+  {
+    Nombres[3] = tmpNombre;
+  }
+
+  /*Serial.print("\nNombre transformé! ");
+  Serial.print(Nombres[0]);
+  Serial.print(Nombres[1]);
+  Serial.print(" ");
+  Serial.print(Nombres[2]);
+  Serial.print(Nombres[3]);*/
 }
 
 
@@ -84,4 +158,65 @@ void RafraichirAffichage()
     DernierRafraichissement = millis();
   }
 }
+
+void AppuisPlus()
+{
+  if ((millis() -DernierAppuisBouton) > DELAI_REBONDS)
+  {
+    if (not start)
+    {
+      NombreEleve++;
+      TransformerNombre(NombreEleve, 0);
+    }
+  }
+}
+
+void AppuisMoins()
+{
+  if ((millis() -DernierAppuisBouton) > DELAI_REBONDS)
+  {
+    if (not start)
+    {
+      NombreEleve--;
+      TransformerNombre(NombreEleve, 0);
+    }
+  }
+}
+
+void AppuisReset()
+{
+  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
+  {
+    if (start)
+    {
+      start != start;
+    }
+    NombreEleve = 0;
+    TransformerNombre(NombreEleve, 0);
+    SecondesDecompte = SECONDES_DECOMPTE;
+    TransformerNombre(SecondesDecompte, 1);
+    
+  }
+}
+
+void AppuisBuzz()
+{
+  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
+  {
+    if (start)
+    {
+      NombreEleve--;
+      TransformerNombre(NombreEleve, 0);
+    }
+  }
+}
+
+void AppuisStart()
+{
+  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
+  {
+    start != start;
+  }
+}
+
 
