@@ -125,8 +125,7 @@ void RafraichirAffichage()
 void TransformerNombre (int aNombre, byte aAfficheur)
 {
   int tmpNombre = aNombre;
-  int i = 0;
-
+  
   //Comptage des dizaines
   while (tmpNombre >= 10)
   {

@@ -112,7 +112,6 @@ void TransformerNombre ()
 {
   int tmpDroite = NombreDroite;
   int tmpGauche = NombreGauche;
-  int i = 0;
 
   //Comptage des dizaines
   while (tmpGauche >= 10)
