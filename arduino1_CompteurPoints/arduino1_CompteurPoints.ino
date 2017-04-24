@@ -135,6 +135,7 @@ void AppuisBouton (short button)
 {
   if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
   {
+    DernierAppuisBouton = millis();
     switch(button) {
       case 1: NombreDroite++;
               break;
@@ -149,7 +150,6 @@ void AppuisBouton (short button)
               break;
     }
     TransformerNombre();
-    DernierAppuisBouton = millis();
   }
 }
 
