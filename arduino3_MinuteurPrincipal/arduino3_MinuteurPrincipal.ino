@@ -31,12 +31,8 @@
 #define NBR_ENTREE_LS         4
 
 //VARAIBLES UTILISÉES PAR LES 74LS47
-int EntreeLS[NOMBRE_AFFICHEURS][NBR_ENTREE_LS] = {{22, 23, 24, 25},  // pin utilisées par les 74ls47
-                                                  {26, 27, 28, 29},
-                                                  {30, 31, 32, 33},
-                                                  {34, 35, 36, 37}};
-
-  
+int EntreeLS[NOMBRE_AFFICHEURS][NBR_ENTREE_LS] = {22, 23, 24, 25};  // pin utilisées par les 74ls47
+                                                   
 //VARIABLES UTILISÉE POUR LES AFFICHEURS
 int Anodes[NOMBRE_AFFICHEURS] = {38, 39, 40, 41};
 int Nombres[NOMBRE_AFFICHEURS] = {1, 3, 6, 8}; //Nombres à afficher sur chaque afficheur
@@ -46,15 +42,11 @@ unsigned long DernierRafraichissement = 0; //Utilisé avec millis()
 void setup() {  
   int i = 0;
   int j = 0;
-  // Anodes configurés en sortie
+  // Anodes et entrées du ls configurés en sortie
   for (i = 0; i < NOMBRE_AFFICHEURS; i++)
   {
     pinMode(Anodes[i], OUTPUT);
-    // Entrées 74LS47 configurées en sortie
-    for (j = 0; i < NBR_ENTREE_LS; i++)
-    {
-      pinMode(EntreeLS[i][j], OUTPUT);
-    }
+    pinMode(EntreeLS[i], OUTPUT);
   }
 }
 
@@ -76,7 +68,7 @@ void RafraichirAffichage()
 
     for (i = 0; i < NBR_ENTREE_LS; i++)
     {
-      digitalWrite(EntreeLS[Afficheur][i], bitRead(Nombres[Afficheur], i));
+      digitalWrite(EntreeLS[i], bitRead(Nombres[Afficheur], i));
     }
     Afficheur = (Afficheur + 1) % NOMBRE_AFFICHEURS;
     DernierRafraichissement = millis();

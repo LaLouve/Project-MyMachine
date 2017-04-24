@@ -40,15 +40,11 @@
 #define NBR_ENTREE_LS         4
 
 //VARAIBLES UTILISÉES PAR LES 74LS47
-int EntreeLS[NOMBRE_AFFICHEURS][NBR_ENTREE_LS] = {{22, 23, 24, 25},  // pin utilisées par les 74ls47
-                                                  {26, 27, 28, 29},
-                                                  {30, 31, 32, 33},
-                                                  {34, 35, 36, 37}};
-
-  
+int EntreeLS[NBR_ENTREE_LS] = {22, 23, 24, 25};  // pin utilisées par les 74ls47
+                                                    
 //VARIABLES UTILISÉE POUR LES AFFICHEURS
 int Anodes[NOMBRE_AFFICHEURS] = {38, 39, 40, 41};
-int Nombres[NOMBRE_AFFICHEURS] = {0, 0, 0, 0}; //Nombres à afficher sur chaque afficheur
+int Nombres[NOMBRE_AFFICHEURS] = {10, 10, 10, 10}; //Nombres à afficher sur chaque afficheur
 byte Afficheur = 0; //Numéro du dernier afficheur rafraichi
 unsigned long DernierRafraichissement = 0; //Utilisé avec millis()
 
@@ -60,20 +56,15 @@ int NombreGauche = 0;
 int NombreDroite = 0;
 
 
-void setup() {  
-  /*Serial.begin(9600);
-  Serial.print("\nAllumage"); */
+void setup() 
+{  
   int i = 0;
   int j = 0;
-  // Anodes configurés en sortie
+  // Anodes et entrées du ls configurés en sortie
   for (i = 0; i < NOMBRE_AFFICHEURS; i++)
   {
     pinMode(Anodes[i], OUTPUT);
-    // Entrées 74LS47 configurées en sortie
-    for (j = 0; i < NBR_ENTREE_LS; i++)
-    {
-      pinMode(EntreeLS[i][j], OUTPUT);
-    }
+    pinMode(EntreeLS[i], OUTPUT);
   }
 
   // Configuration des boutons
@@ -92,8 +83,29 @@ void setup() {
 
 }
 
-void loop() {
+void loop() 
+{
   RafraichirAffichage();
+}
+
+void RafraichirAffichage()
+{
+  int i = 0;
+  if ((millis() - DernierRafraichissement) > DELAI_RAFRAICHIR / NOMBRE_AFFICHEURS)
+  {
+    for (i = 0; i < NOMBRE_AFFICHEURS; i++)
+    {
+      digitalWrite(Anodes[i], LOW);
+    }
+    digitalWrite(Anodes[Afficheur], HIGH);
+
+    for (i = 0; i < NBR_ENTREE_LS; i++)
+    {
+      digitalWrite(EntreeLS[i], bitRead(Nombres[Afficheur], i));
+    }
+    Afficheur = (Afficheur + 1) % NOMBRE_AFFICHEURS;
+    DernierRafraichissement = millis();
+  }
 }
 
 void TransformerNombre ()
@@ -102,11 +114,6 @@ void TransformerNombre ()
   int tmpGauche = NombreGauche;
   int i = 0;
 
-  /*
-  Serial.print("\nNouveau Nombre! G|D ");
-  Serial.print(NombreGauche);
-  Serial.print(" | ");
-  Serial.print(NombreDroite); */
   //Comptage des dizaines
   while (tmpGauche >= 10)
   {
@@ -123,33 +130,6 @@ void TransformerNombre ()
   //Comptage des unités
   Nombres[1] = tmpGauche;
   Nombres[3] = tmpDroite;
-
-  /*Serial.print("\nNombre transformé! ");
-  Serial.print(Nombres[0]);
-  Serial.print(Nombres[1]);
-  Serial.print(" ");
-  Serial.print(Nombres[2]);
-  Serial.print(Nombres[3]);*/
-}
-
-void RafraichirAffichage()
-{
-  int i = 0;
-  if ((millis() - DernierRafraichissement) > DELAI_RAFRAICHIR / NOMBRE_AFFICHEURS)
-  {
-    for (i = 0; i < NOMBRE_AFFICHEURS; i++)
-    {
-      digitalWrite(Anodes[i], LOW);
-    }
-    digitalWrite(Anodes[Afficheur], HIGH);
-
-    for (i = 0; i < NBR_ENTREE_LS; i++)
-    {
-      digitalWrite(EntreeLS[Afficheur][i], bitRead(Nombres[Afficheur], i));
-    }
-    Afficheur = (Afficheur + 1) % NOMBRE_AFFICHEURS;
-    DernierRafraichissement = millis();
-  }
 }
 
 void AppuisPlusDroite ()
