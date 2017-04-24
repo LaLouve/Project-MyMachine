@@ -138,6 +138,7 @@ void AppuisPlusDroite ()
   {
     NombreDroite++;
     TransformerNombre();
+    DernierAppuisBouton = millis();
   }
 }
 
@@ -147,6 +148,7 @@ void AppuisMoinsDroite ()
   {
     NombreDroite--;
     TransformerNombre();
+    DernierAppuisBouton = millis();
   }
 }
 
@@ -156,6 +158,7 @@ void AppuisPlusGauche ()
   {
     NombreGauche++;
     TransformerNombre();
+    DernierAppuisBouton = millis();
   }
 }
 
@@ -165,6 +168,7 @@ void AppuisMoinsGauche ()
   {
     NombreGauche--;
     TransformerNombre();
+    DernierAppuisBouton = millis();
   }
 }
 
@@ -175,5 +179,6 @@ void AppuisReset()
     NombreGauche = 0;
     NombreDroite = 0;
     TransformerNombre();
+    DernierAppuisBouton = millis();
   }
 }

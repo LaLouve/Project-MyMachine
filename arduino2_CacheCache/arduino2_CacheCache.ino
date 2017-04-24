@@ -162,6 +162,7 @@ void AppuisPlus()
     {
       NombreEleve++;
       TransformerNombre(NombreEleve, 0);
+      DernierAppuisBouton = millis();
     }
   }
 }
@@ -174,6 +175,7 @@ void AppuisMoins()
     {
       NombreEleve--;
       TransformerNombre(NombreEleve, 0);
+      DernierAppuisBouton = millis();
     }
   }
 }
@@ -190,7 +192,7 @@ void AppuisReset()
     TransformerNombre(NombreEleve, 0);
     SecondesDecompte = SECONDES_DECOMPTE;
     TransformerNombre(SecondesDecompte, 1);
-    
+    DernierAppuisBouton = millis();    
   }
 }
 
@@ -202,6 +204,7 @@ void AppuisBuzz()
     {
       NombreEleve--;
       TransformerNombre(NombreEleve, 0);
+      DernierAppuisBouton = millis();
     }
   }
 }
@@ -211,6 +214,7 @@ void AppuisStart()
   if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
   {
     start != start;
+    DernierAppuisBouton = millis();
   }
 }
 
