@@ -131,53 +131,49 @@ void TransformerNombre ()
   Nombres[3] = tmpDroite;
 }
 
-void AppuisPlusDroite ()
+void AppuisBouton (short button)
 {
   if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
   {
-    NombreDroite++;
-    TransformerNombre();
     DernierAppuisBouton = millis();
+    switch(button) {
+      case 1: NombreDroite++;
+              break;
+      case 2: NombreDroite--;
+              break;
+      case 3: NombreGauche++;
+              break;
+      case 4: NombreGauche--;
+              break;
+      default:NombreGauche = 0;
+              NombreDroite = 0;
+              break;
+    }
+    TransformerNombre();
   }
+}
+
+void AppuisPlusDroite ()
+{
+  AppuisBouton(1);
 }
 
 void AppuisMoinsDroite ()
 {
-  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
-  {
-    NombreDroite--;
-    TransformerNombre();
-    DernierAppuisBouton = millis();
-  }
+  AppuisBouton(2);
 }
 
 void AppuisPlusGauche ()
 {
-  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
-  {
-    NombreGauche++;
-    TransformerNombre();
-    DernierAppuisBouton = millis();
-  }
+  AppuisBouton(3);
 }
 
 void AppuisMoinsGauche ()
 {
-  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
-  {
-    NombreGauche--;
-    TransformerNombre();
-    DernierAppuisBouton = millis();
-  }
+  AppuisBouton(4);
 }
 
 void AppuisReset()
 {
-  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
-  {
-    NombreGauche = 0;
-    NombreDroite = 0;
-    TransformerNombre();
-    DernierAppuisBouton = millis();
-  }
+  AppuisBouton(5);
 }
