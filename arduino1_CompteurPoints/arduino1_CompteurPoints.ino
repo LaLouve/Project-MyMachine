@@ -30,7 +30,7 @@
 #define BOUTON_PLUS_GAUCHE    20
 #define BOUTON_MOINS_GAUCHE   21
 #define BOUTON_RESET          3
-#define DELAI_REBONDS         100  //En milisecondes
+#define DELAI_REBONDS         500  //En milisecondes
 
 //PARAMETRAGE AFFICHEURS 7 SEGMENTS
 #define NOMBRE_AFFICHEURS     4
@@ -58,6 +58,13 @@ int NombreDroite = 0;
 
 void setup() 
 {  
+  Serial.begin(9600);
+  Serial.println(NombreDroite);
+  Serial.println(NombreGauche);
+  Serial.println(Nombres[0]);
+  Serial.println(Nombres[1]);
+  Serial.println(Nombres[2]);
+  Serial.println(Nombres[3]);
   int i = 0;
   int j = 0;
   // Anodes et entrées du ls configurés en sortie
@@ -113,6 +120,8 @@ void TransformerNombre ()
   int tmpDroite = NombreDroite;
   int tmpGauche = NombreGauche;
 
+  Nombres[0] = 0;
+  Nombres[2] = 0;
   //Comptage des dizaines
   while (tmpGauche >= 10)
   {
@@ -129,6 +138,13 @@ void TransformerNombre ()
   //Comptage des unités
   Nombres[1] = tmpGauche;
   Nombres[3] = tmpDroite;
+  Serial.println("transformer nombre");
+  Serial.println(NombreDroite);
+  Serial.println(NombreGauche);
+  Serial.println(Nombres[0]);
+  Serial.println(Nombres[1]);
+  Serial.println(Nombres[2]);
+  Serial.println(Nombres[3]);
 }
 
 void AppuisBouton (short bouton)
@@ -149,6 +165,14 @@ void AppuisBouton (short bouton)
       default:NombreGauche = 0;
               NombreDroite = 0;
               break;
+    }
+    if (NombreDroite < 0)
+    {
+      NombreDroite = 0;
+    }
+    if (NombreGauche < 0)
+    {
+      NombreGauche = 0;
     }
     TransformerNombre();
   }
