@@ -140,53 +140,54 @@ void TransformerNombre(unsigned int aNombre)
   Nombres[3] = NbrSecondes;
 }
 
-void AppuisPlus()
+void AppuisBouton (short bouton)
 {
   if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
   {
-    if (not start)
+    DernierAppuisBouton = millis();
+    switch(bouton)
     {
-      Tick++;
-      TransformerNombre(Tick);
-      DernierAppuisBouton = millis();
+      case 1: Tick++;
+              break;
+      case 2: Tick--;
+              break;
+      case 3: start != start;
+              break;
+      default: Tick = 0;
+               if (start)
+               {
+                start != start;
+               }
+               break;          
     }
+    TransformerNombre(Tick);
+  }
+}
+
+void AppuisPlus()
+{
+  if (not start)
+  {
+    AppuisBouton(1);
   }
 }
 
 void AppuisMoins()
 {
-  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
+  if (not start)
   {
-    if (not start)
-    {
-      Tick--;
-      TransformerNombre(Tick);
-      DernierAppuisBouton = millis();
-    }
+    AppuisBouton(2);
   }
 }
 
 void AppuisStart()
 {
-  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
-  {
-    start != start;
-    DernierAppuisBouton = millis();
-  }
+  AppuisBouton(3);
 }
 
 void AppuisReset()
 {
-  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
-  {
-    if (start)
-    {
-      start != start;
-    }
-    Tick = 0;
-    TransformerNombre(Tick);
-    DernierAppuisBouton = millis();
-  }
+  AppuisBouton(4);
 }
 
 

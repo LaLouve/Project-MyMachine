@@ -153,68 +153,63 @@ void TransformerNombre (int aNombre, byte aAfficheur)
   }
 }
 
+void AppuisBouton (short bouton)
+{
+  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
+  {
+    DernierAppuisBouton = millis();
+    switch(bouton)
+    {
+      case 1: NombreEleve++;
+              break;
+      case 2: NombreEleve--;
+              break;
+      case 3: NombreEleve--;
+              break;
+      case 4: start != start;
+              break;
+      default: NombreEleve = 0;
+               SecondesDecompte = SECONDES_DECOMPTE;
+               TransformerNombre(SecondesDecompte, 1);
+               if (start)
+               {
+                start != start;
+               }
+    }
+    TransformerNombre(NombreEleve, 0);
+  }
+}
+
 void AppuisPlus()
 {
-  if ((millis() -DernierAppuisBouton) > DELAI_REBONDS)
+  if (not start)
   {
-    if (not start)
-    {
-      NombreEleve++;
-      TransformerNombre(NombreEleve, 0);
-      DernierAppuisBouton = millis();
-    }
+    AppuisBouton(1);
   }
 }
 
 void AppuisMoins()
 {
-  if ((millis() -DernierAppuisBouton) > DELAI_REBONDS)
+  if (not start)
   {
-    if (not start)
-    {
-      NombreEleve--;
-      TransformerNombre(NombreEleve, 0);
-      DernierAppuisBouton = millis();
-    }
-  }
-}
-
-void AppuisReset()
-{
-  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
-  {
-    if (start)
-    {
-      start != start;
-    }
-    NombreEleve = 0;
-    TransformerNombre(NombreEleve, 0);
-    SecondesDecompte = SECONDES_DECOMPTE;
-    TransformerNombre(SecondesDecompte, 1);
-    DernierAppuisBouton = millis();    
+    AppuisBouton(2);
   }
 }
 
 void AppuisBuzz()
 {
-  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
+  if (start)
   {
-    if (start)
-    {
-      NombreEleve--;
-      TransformerNombre(NombreEleve, 0);
-      DernierAppuisBouton = millis();
-    }
+    AppuisBouton(3);
   }
 }
 
 void AppuisStart()
 {
-  if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
-  {
-    start != start;
-    DernierAppuisBouton = millis();
-  }
+  AppuisBouton(4);
 }
 
-
+void AppuisReset()
+{
+  AppuisBouton(5);  
+}

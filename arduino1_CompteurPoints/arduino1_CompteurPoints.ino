@@ -131,12 +131,13 @@ void TransformerNombre ()
   Nombres[3] = tmpDroite;
 }
 
-void AppuisBouton (short button)
+void AppuisBouton (short bouton)
 {
   if ((millis() - DernierAppuisBouton) > DELAI_REBONDS)
   {
     DernierAppuisBouton = millis();
-    switch(button) {
+    switch(bouton) 
+    {
       case 1: NombreDroite++;
               break;
       case 2: NombreDroite--;
