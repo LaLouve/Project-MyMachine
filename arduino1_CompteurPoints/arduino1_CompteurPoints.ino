@@ -43,8 +43,8 @@
 int EntreeLS[NBR_ENTREE_LS] = {22, 23, 24, 25};  // pin utilisées par les 74ls47
                                                     
 //VARIABLES UTILISÉE POUR LES AFFICHEURS
-int Anodes[NOMBRE_AFFICHEURS] = {38, 39, 40, 41};
-int Nombres[NOMBRE_AFFICHEURS] = {10, 10, 10, 10}; //Nombres à afficher sur chaque afficheur
+int Anodes[NOMBRE_AFFICHEURS] = {38, 39, 40, 41}; // pin afficheur 4x7 segment
+int Nombres[NOMBRE_AFFICHEURS] = {8, 8, 8, 8}; //Nombres à afficher sur chaque afficheur
 byte Afficheur = 0; //Numéro du dernier afficheur rafraichi
 unsigned long DernierRafraichissement = 0; //Utilisé avec millis()
 
