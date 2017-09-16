@@ -30,7 +30,7 @@
 #define BOUTON_PLUS_GAUCHE    20
 #define BOUTON_MOINS_GAUCHE   21
 #define BOUTON_RESET          3
-#define DELAI_REBONDS         500  //En milisecondes
+#define DELAI_REBONDS         250  //En milisecondes
 
 //PARAMETRAGE AFFICHEURS 7 SEGMENTS
 #define NOMBRE_AFFICHEURS     4
@@ -39,12 +39,12 @@
 //PARAMETRAGE 74LS47
 #define NBR_ENTREE_LS         4
 
-//VARAIBLES UTILISÉES PAR LES 74LS47
-int EntreeLS[NBR_ENTREE_LS] = {22, 23, 24, 25};  // pin utilisées par les 74ls47
+//VARAIBLES UTILISÉES PAR LE 74LS47
+int EntreeLS[NBR_ENTREE_LS] = {30, 31, 32, 33};  // pin utilisées par le 74ls47, les pins correspondent dans l'ordre: A0, A1, A2 et A3
                                                     
 //VARIABLES UTILISÉE POUR LES AFFICHEURS
-int Anodes[NOMBRE_AFFICHEURS] = {38, 39, 40, 41}; // pin afficheur 4x7 segment
-int Nombres[NOMBRE_AFFICHEURS] = {8, 8, 8, 8}; //Nombres à afficher sur chaque afficheur
+int Anodes[NOMBRE_AFFICHEURS] = {38, 39, 40, 41}; // pin afficheur 4x7 segment, les pins correspondent aux entrées de l'afficheur dans l'ordre: 12, 9, 8 et 6 (gauche à droite, bas à haut)
+int Nombres[NOMBRE_AFFICHEURS] = {0, 0, 0, 0}; //Nombres à afficher sur chaque afficheur
 byte Afficheur = 0; //Numéro du dernier afficheur rafraichi
 unsigned long DernierRafraichissement = 0; //Utilisé avec millis()
 
@@ -58,12 +58,13 @@ int NombreDroite = 0;
 
 void setup() 
 {  
+  // Tous les Serial servent pour les tests de fonctionnement, à supprimer pour utilisation définitive.
   Serial.begin(9600);
   Serial.println(NombreDroite);
   Serial.println(NombreGauche);
-  Serial.println(Nombres[0]);
-  Serial.println(Nombres[1]);
-  Serial.println(Nombres[2]);
+  Serial.print(Nombres[0]);
+  Serial.print(Nombres[1]);
+  Serial.print(Nombres[2]);
   Serial.println(Nombres[3]);
   int i = 0;
   int j = 0;
@@ -115,6 +116,27 @@ void RafraichirAffichage()
   }
 }
 
+void VerifierDepassement()
+{
+  // borne les nombres à afficher entre 0 et 99
+  if (NombreDroite < 0)
+  {
+    NombreDroite = 0;
+  }
+  else if (NombreDroite > 99)
+  {
+    NombreDroite = 99;
+  }
+  if (NombreGauche < 0)
+  {
+    NombreGauche = 0;
+  }
+  else if (NombreGauche > 99)
+  {
+    NombreGauche = 99;
+  }
+}
+
 void TransformerNombre ()
 {
   int tmpDroite = NombreDroite;
@@ -141,9 +163,9 @@ void TransformerNombre ()
   Serial.println("transformer nombre");
   Serial.println(NombreDroite);
   Serial.println(NombreGauche);
-  Serial.println(Nombres[0]);
-  Serial.println(Nombres[1]);
-  Serial.println(Nombres[2]);
+  Serial.print(Nombres[0]);
+  Serial.print(Nombres[1]);
+  Serial.print(Nombres[2]);
   Serial.println(Nombres[3]);
 }
 
@@ -166,14 +188,7 @@ void AppuisBouton (short bouton)
               NombreDroite = 0;
               break;
     }
-    if (NombreDroite < 0)
-    {
-      NombreDroite = 0;
-    }
-    if (NombreGauche < 0)
-    {
-      NombreGauche = 0;
-    }
+    VerifierDepassement();
     TransformerNombre();
   }
 }
