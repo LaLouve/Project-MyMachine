@@ -208,7 +208,7 @@ void AppuisBouton (short bouton)
                Serial.println(SecondesDecompte);
                if (start)
                {
-                start != start;
+                start = !start;
                }
     }
     VerifierDepassement();
@@ -234,7 +234,7 @@ void AppuisMoins()
 
 void AppuisBuzz()
 {
-  if (start)
+  if ((start) and (SecondesDecompte <= 0))
   {
     AppuisBouton(3);
   }
