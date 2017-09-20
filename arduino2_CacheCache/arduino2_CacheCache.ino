@@ -30,7 +30,7 @@
 #define BOUTON_START    20
 #define BOUTON_RESET    21
 #define BOUTON_BUZZ     3
-#define DELAI_REBONDS   100   //En millisencondes
+#define DELAI_REBONDS   250   //En millisencondes
 
 //PARAMETRAGE AFFICHEURS 7 SEGMENTS
 #define NOMBRE_AFFICHEURS     4
@@ -44,11 +44,11 @@
 #define DELAI_SECONDE         1000
 
 //VARAIBLES UTILISÉES PAR LES 74LS47
-int EntreeLS[NBR_ENTREE_LS] = {22, 23, 24, 25};  // pin utilisées par les 74ls47
+int EntreeLS[NBR_ENTREE_LS] = {30, 31, 32, 33};  // pin utilisées par le 74ls47, les pins correspondent dans l'ordre: A0, A1, A2 et A3
                                                   
 //VARIABLES UTILISÉE POUR LES AFFICHEURS
-int Anodes[NOMBRE_AFFICHEURS] = {38, 39, 40, 41};
-int Nombres[NOMBRE_AFFICHEURS] = {10, 10, 10, 10}; //Nombres à afficher sur chaque afficheur
+int Anodes[NOMBRE_AFFICHEURS] = {38, 39, 40, 41}; // pin afficheur 4x7 segment, les pins correspondent aux entrées de l'afficheur dans l'ordre: 12, 9, 8 et 6 (gauche à droite, bas à haut)
+int Nombres[NOMBRE_AFFICHEURS] = {0, 0, 0, 0}; //Nombres à afficher sur chaque afficheur
 byte Afficheur = 0; //Numéro du dernier afficheur rafraichi
 unsigned long DernierRafraichissement = 0; //Utilisé avec millis()
 
@@ -63,7 +63,11 @@ unsigned long DerniereSeconde = 0;
 
 
 void setup() 
-{  
+{ 
+  // Tous les Serial servent pour les tests de fonctionnement, à supprimer pour utilisation définitive.
+  Serial.begin(9600);
+  Serial.print("Start: ");
+  Serial.println(start);
   int i = 0;
   int j = 0;
   // Anodes et entrées du ls configurés en sortie
@@ -86,18 +90,24 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(20), AppuisStart, FALLING);
   attachInterrupt(digitalPinToInterrupt(21), AppuisReset, FALLING);
   attachInterrupt(digitalPinToInterrupt(3), AppuisBuzz, FALLING);
-  
+
+  //Mise des afficheurs à leur valeur intiale
+  TransformerNombre();  
 }
 
 void loop() {
   RafraichirAffichage();
 
-  if (start)
+  if (start and (SecondesDecompte > 0))
   {
     if ((millis() - DerniereSeconde) > DELAI_SECONDE)
     {
       SecondesDecompte --;
-      TransformerNombre(SecondesDecompte, 1);
+      VerifierDepassement();
+      TransformerNombre();
+      DerniereSeconde = millis();
+      Serial.print("Secondes: ");
+      Serial.println(SecondesDecompte);
     }
   }
 }
@@ -122,35 +132,57 @@ void RafraichirAffichage()
   }
 }
 
-void TransformerNombre (int aNombre, byte aAfficheur)
+void VerifierDepassement()
 {
-  int tmpNombre = aNombre;
+  // borne les nombres à afficher entre 0 et 99
+  if (NombreEleve < 0)
+  {
+    NombreEleve = 0;
+  }
+  else if (NombreEleve > 99)
+  {
+    NombreEleve = 99;
+  }
+  if (SecondesDecompte < 0)
+  {
+    SecondesDecompte = 0;
+  }
+  else if (SecondesDecompte > 99)
+  {
+    SecondesDecompte = 99;
+  }
+}
+
+void TransformerNombre ()
+{
+  Serial.println("Transformer nombre");
+  int tmpEleve = NombreEleve;
+  int tmpSeconde = SecondesDecompte;
+
+  Nombres[0] = 0;
+  Nombres[2] = 0;
   
   //Comptage des dizaines
-  while (tmpNombre >= 10)
+  while (tmpEleve >= 10)
   {
-    tmpNombre -= 10;
-    
-    if (aAfficheur == 0)
-    {
-      Nombres[0] = Nombres[0] + 1;
-    }
-    else
-    {
-      Nombres[2] = Nombres[2] + 1;
-    }
-    
+    tmpEleve -= 10;
+    Nombres[0] = Nombres[0] + 1;
   }
-  
+
+  while (tmpSeconde >= 10)
+  {
+    tmpSeconde -= 10;
+    Nombres[2] = Nombres[2] + 1;
+  }
+ 
   //Comptage des unités
-  if (aAfficheur == 0)
-  {
-    Nombres[1] =  tmpNombre;
-  }
-  else
-  {
-    Nombres[3] = tmpNombre;
-  }
+  Nombres[1] =  tmpEleve;
+  Nombres[3] = tmpSeconde;
+
+  Serial.print(Nombres[0]);
+  Serial.print(Nombres[1]);
+  Serial.print(Nombres[2]);
+  Serial.println(Nombres[3]);
 }
 
 void AppuisBouton (short bouton)
@@ -166,17 +198,21 @@ void AppuisBouton (short bouton)
               break;
       case 3: NombreEleve--;
               break;
-      case 4: start != start;
+      case 4: start = !start;
+              Serial.print("Start :");
+              Serial.println(start);
               break;
       default: NombreEleve = 0;
                SecondesDecompte = SECONDES_DECOMPTE;
-               TransformerNombre(SecondesDecompte, 1);
+               Serial.print("Reset:");
+               Serial.println(SecondesDecompte);
                if (start)
                {
                 start != start;
                }
     }
-    TransformerNombre(NombreEleve, 0);
+    VerifierDepassement();
+    TransformerNombre();
   }
 }
 

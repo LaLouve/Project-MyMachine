@@ -191,7 +191,7 @@ void AppuisBouton (short bouton)
     VerifierDepassement();
     TransformerNombre();
   }
-}
+} 
 
 void AppuisPlusDroite ()
 {
