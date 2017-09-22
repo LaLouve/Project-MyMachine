@@ -83,11 +83,11 @@ void setup()
   pinMode(BOUTON_RESET, INPUT_PULLUP);
 
   // Configuration des Interruptions
-  attachInterrupt(digitalPinToInterrupt(18), AppuisPlusDroite, FALLING);
-  attachInterrupt(digitalPinToInterrupt(19), AppuisMoinsDroite, FALLING);
-  attachInterrupt(digitalPinToInterrupt(20), AppuisPlusGauche, FALLING);
-  attachInterrupt(digitalPinToInterrupt(21), AppuisMoinsGauche, FALLING);
-  attachInterrupt(digitalPinToInterrupt(3), AppuisReset, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BOUTON_PLUS_DROITE), AppuisPlusDroite, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BOUTON_MOINS_DROITE), AppuisMoinsDroite, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BOUTON_PLUS_GAUCHE), AppuisPlusGauche, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BOUTON_MOINS_GAUCHE), AppuisMoinsGauche, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BOUTON_RESET), AppuisReset, FALLING);
 
 }
 

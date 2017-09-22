@@ -85,11 +85,11 @@ void setup()
   pinMode(BOUTON_BUZZ, INPUT_PULLUP);
 
   // Configuration des interruptions
-  attachInterrupt(digitalPinToInterrupt(18), AppuisPlus, FALLING);
-  attachInterrupt(digitalPinToInterrupt(19), AppuisMoins, FALLING);
-  attachInterrupt(digitalPinToInterrupt(20), AppuisStart, FALLING);
-  attachInterrupt(digitalPinToInterrupt(21), AppuisReset, FALLING);
-  attachInterrupt(digitalPinToInterrupt(3), AppuisBuzz, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BOUTON_PLUS), AppuisPlus, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BOUTON_MOINS), AppuisMoins, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BOUTON_START), AppuisStart, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BOUTON_RESET), AppuisReset, FALLING);
+  attachInterrupt(digitalPinToInterrupt(BOUTON_BUZZ), AppuisBuzz, FALLING);
 
   //Mise des afficheurs à leur valeur intiale
   TransformerNombre();  
