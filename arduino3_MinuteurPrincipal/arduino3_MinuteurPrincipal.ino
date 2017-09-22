@@ -24,12 +24,13 @@
  * arduino n°1: Compteur de Points
  */
 
+#include <Keypad.h>
+#include <Key.h>
+
 //PARAMETRAGE DES BOUTONS
-#define BOUTON_PLUS           18   // Pin utilisées par les boutons
-#define BOUTON_MOINS          19
-#define BOUTON_START          20
-#define BOUTON_RESET          21
-#define DELAI_REBONDS         100 //En millisecondes
+#define BOUTON_START          18
+#define SWITCH_CLEF           19
+#define DELAI_REBONDS         250 //En millisecondes
  
 //PARAMETRAGE AFFICHEURS 7 SEGMENTS
 #define NOMBRE_AFFICHEURS     4
@@ -41,12 +42,16 @@
 //PARAMETRAGE DU MINUTEUR
 #define DELAI_SECONDE         1000
 
+//PARAMETRAGE CLAVIER
+ #define LIGNES         4   //4 LIGNES
+ #define COLONNES       4   //4 COLONNES
+
 //VARAIBLES UTILISÉES PAR LES 74LS47
-int EntreeLS[NBR_ENTREE_LS] = {22, 23, 24, 25};  // pin utilisées par les 74ls47
+int EntreeLS[NBR_ENTREE_LS] = {30, 31, 32, 33};  // pin utilisées par le 74ls47, les pins correspondent dans l'ordre: A0, A1, A2 et A3
                                                    
 //VARIABLES UTILISÉE POUR LES AFFICHEURS
-int Anodes[NOMBRE_AFFICHEURS] = {38, 39, 40, 41};
-int Nombres[NOMBRE_AFFICHEURS] = {10, 10, 10, 10}; //Nombres à afficher sur chaque afficheur
+int Anodes[NOMBRE_AFFICHEURS] = {38, 39, 40, 41}; // pin afficheur 4x7 segment, les pins correspondent aux entrées de l'afficheur dans l'ordre: 12, 9, 8 et 6 (gauche à droite, bas à haut)
+int Nombres[NOMBRE_AFFICHEURS] = {0, 0, 0, 0}; //Nombres à afficher sur chaque afficheur
 byte Afficheur = 0; //Numéro du dernier afficheur rafraichi
 unsigned long DernierRafraichissement = 0; //Utilisé avec millis()
 
@@ -55,11 +60,23 @@ unsigned long DernierAppuisBouton = 0;
 boolean start = false;
 
 //VARIABLES UTILISÉES POUR LE MINUTEUR
-unsigned int Tick = 90; //Nombre de secondes à décompter (1m30 = 90 pour test)
+unsigned int Tick = 0; //Nombre de secondes à décompter (1m30 = 90 pour test)
 unsigned int NbrMinutes = 0;
 unsigned int NbrSecondes = 0;
 unsigned long DernierTick = 0;
 
+//VARIABLES CLAVIER
+char symboles[LIGNES][COLONNES] =  {{'1', '4', '7', '*'},
+                                    {'2', '5', '8', '0'},
+                                    {'3', '6', '9', '#'},
+                                    {'A', 'B', 'C', 'D'}};
+int pinLignes[LIGNES] = {9, 8, 7, 6};
+int pinColonnes[COLONNES] = {13, 12, 11, 10};
+
+int i = 0;
+
+//initialisation du clavier avec la bibliothèque keypad
+Keypad clavier = Keypad(makeKeymap(symboles), pinLignes, pinColonnes, LIGNES, COLONNES);
 
 void setup() 
 {  
@@ -73,16 +90,13 @@ void setup()
   }
 
   // Configuration des boutons
-  pinMode(BOUTON_PLUS, INPUT_PULLUP);
-  pinMode(BOUTON_MOINS, INPUT_PULLUP);
   pinMode(BOUTON_START, INPUT_PULLUP);
-  pinMode(BOUTON_RESET, INPUT_PULLUP);
+  pinMode(SWITCH_CLEF, INPUT_PULLUP);
 
   // Configuration des interruptions
-  attachInterrupt(digitalPinToInterrupt(18), AppuisPlus, FALLING);
-  attachInterrupt(digitalPinToInterrupt(19), AppuisMoins, FALLING);
+
   attachInterrupt(digitalPinToInterrupt(20), AppuisStart, FALLING);
-  attachInterrupt(digitalPinToInterrupt(21), AppuisReset, FALLING);
+  attachInterrupt(digitalPinToInterrupt(3), SwitchClef, CHANGE);
 }
 
 void loop() 
@@ -90,14 +104,16 @@ void loop()
   RafraichirAffichage();
   if (start)
   {
-    Tick--;
-    TransformerNombre(Tick);
+    if ((millis() - DernierTick) > DELAI_SECONDE)
+    {
+      Tick--;
+      TransformerNombre();
+    }
   }
 }
 
 void RafraichirAffichage()
 {
-  int i = 0;
   if ((millis() - DernierRafraichissement) > DELAI_RAFRAICHIR / NOMBRE_AFFICHEURS)
   {
     for (i = 0; i < NOMBRE_AFFICHEURS; i++)
@@ -115,15 +131,20 @@ void RafraichirAffichage()
   }
 }
 
-void TransformerNombre(unsigned int aNombre)
-{ 
-  if (aNombre < 0)
+void InterrogerClavier()
+{
+  char caractere = clavier.getKey()
+
+  if (caractere == "*")
   {
-    aNombre = 0;
+    for (i = 0)
   }
-  
-  NbrMinutes = aNombre/60;
-  NbrSecondes = aNombre - (NbrMinutes * 60);
+}
+
+void TransformerNombre()
+{ 
+  NbrMinutes = Tick/60;
+  NbrSecondes = Tick - (NbrMinutes * 60);
 
   while (NbrMinutes >= 10)
   {
@@ -147,10 +168,6 @@ void AppuisBouton (short bouton)
     DernierAppuisBouton = millis();
     switch(bouton)
     {
-      case 1: Tick++;
-              break;
-      case 2: Tick--;
-              break;
       case 3: start != start;
               break;
       default: Tick = 0;
@@ -160,35 +177,16 @@ void AppuisBouton (short bouton)
                }
                break;          
     }
-    TransformerNombre(Tick);
+    TransformerNombre();
   }
 }
 
-void AppuisPlus()
-{
-  if (not start)
-  {
-    AppuisBouton(1);
-  }
-}
-
-void AppuisMoins()
-{
-  if (not start)
-  {
-    AppuisBouton(2);
-  }
-}
 
 void AppuisStart()
 {
   AppuisBouton(3);
 }
 
-void AppuisReset()
-{
-  AppuisBouton(4);
-}
 
 
 
