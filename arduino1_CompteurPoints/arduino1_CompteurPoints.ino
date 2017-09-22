@@ -103,9 +103,9 @@ void RafraichirAffichage()
   {
     for (i = 0; i < NOMBRE_AFFICHEURS; i++)
     {
-      digitalWrite(Anodes[i], LOW);
+      digitalWrite(Anodes[i], HIGH);
     }
-    digitalWrite(Anodes[Afficheur], HIGH);
+    digitalWrite(Anodes[Afficheur], LOW);
 
     for (i = 0; i < NBR_ENTREE_LS; i++)
     {
