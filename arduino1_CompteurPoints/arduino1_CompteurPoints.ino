@@ -25,10 +25,10 @@
  */
 
 //PARAMETRAGE BOUTONS
-#define BOUTON_PLUS_DROITE    18    //Pin utilisée par le bouton
-#define BOUTON_MOINS_DROITE   19
-#define BOUTON_PLUS_GAUCHE    20
-#define BOUTON_MOINS_GAUCHE   21
+#define BOUTON_PLUS_DROITE    20    //Pin utilisée par le bouton
+#define BOUTON_MOINS_DROITE   21
+#define BOUTON_PLUS_GAUCHE    18
+#define BOUTON_MOINS_GAUCHE   19
 #define BOUTON_RESET          3
 #define DELAI_REBONDS         250  //En milisecondes
 
