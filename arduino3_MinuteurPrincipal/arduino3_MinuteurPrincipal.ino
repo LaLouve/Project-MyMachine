@@ -1,3 +1,5 @@
+#include <Keypad.h>
+#include <Key.h>
 /**
  * The MIT License
  * Copyright (c) 2017 Florence Dervaux
@@ -5,7 +7,7 @@
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * to use, copy, Modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
@@ -23,9 +25,6 @@
  * Projet My Machine
  * arduino n°1: Compteur de Points
  */
-
-#include <Keypad.h>
-#include <Key.h>
 
 //PARAMETRAGE DES BOUTONS
 #define BOUTON_START          18
@@ -57,7 +56,8 @@ unsigned long DernierRafraichissement = 0; //Utilisé avec millis()
 
 //VARIABLES UTILISÉES POUR LES BOUTONS
 unsigned long DernierAppuisBouton = 0;
-boolean start = false;
+boolean Start = false;
+boolean clef = false;
 
 //VARIABLES UTILISÉES POUR LE MINUTEUR
 unsigned int Tick = 0; //Nombre de secondes à décompter (1m30 = 90 pour test)
@@ -70,8 +70,10 @@ char symboles[LIGNES][COLONNES] =  {{'1', '4', '7', '*'},
                                     {'2', '5', '8', '0'},
                                     {'3', '6', '9', '#'},
                                     {'A', 'B', 'C', 'D'}};
-int pinLignes[LIGNES] = {9, 8, 7, 6};
-int pinColonnes[COLONNES] = {13, 12, 11, 10};
+byte pinLignes[LIGNES] = {9, 8, 7, 6};
+byte pinColonnes[COLONNES] = {13, 12, 11, 10};
+boolean Modif = false;
+byte AfficheurModif = 0;
 
 int i = 0;
 
@@ -80,6 +82,7 @@ Keypad clavier = Keypad(makeKeymap(symboles), pinLignes, pinColonnes, LIGNES, CO
 
 void setup() 
 {  
+  Serial.begin(9600);
   int i = 0;
   int j = 0;
   // Anodes et entrées du ls configurés en sortie
@@ -93,21 +96,60 @@ void setup()
   pinMode(BOUTON_START, INPUT_PULLUP);
   pinMode(SWITCH_CLEF, INPUT_PULLUP);
 
+  clef = digitalRead(SWITCH_CLEF);
+
   // Configuration des interruptions
 
-  attachInterrupt(digitalPinToInterrupt(20), AppuisStart, FALLING);
-  attachInterrupt(digitalPinToInterrupt(3), SwitchClef, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(BOUTON_START), AppuisStart, FALLING);
+  attachInterrupt(digitalPinToInterrupt(SWITCH_CLEF), SwitchClef, CHANGE);
 }
 
 void loop() 
 {
   RafraichirAffichage();
-  if (start)
+  char caractere = clavier.getKey();
+
+  if (caractere == '*')
+  {
+    Modif = true;
+    Start = false;
+    AfficheurModif = 0;
+    for (i = 0; i < NOMBRE_AFFICHEURS; i++)
+    {
+      // permet de ne rien afficher sans éteindre l'afficheur
+      Nombres[i] = 15;
+    }
+  }
+  else if ((Modif) && (isDigit(caractere)))
+  {
+    int chiffre = int(caractere);
+    
+    Serial.print("Afficheur: ");
+    Serial.println(AfficheurModif);
+    Serial.println(chiffre);
+    
+    Nombres[AfficheurModif] = chiffre;
+    
+    Serial.println(Nombres[AfficheurModif]);
+    RafraichirAffichage();
+    if (AfficheurModif == 3)
+    {
+      Modif = false;
+      TransfoTick();
+    }
+    AfficheurModif = (AfficheurModif + 1) % NOMBRE_AFFICHEURS;
+    Serial.print("Afficheur 2: ");
+    Serial.println(AfficheurModif);
+  }
+
+  if (Start)
   {
     if ((millis() - DernierTick) > DELAI_SECONDE)
     {
       Tick--;
+      Serial.println(Tick);
       TransformerNombre();
+      DernierTick = millis();
     }
   }
 }
@@ -131,14 +173,14 @@ void RafraichirAffichage()
   }
 }
 
-void InterrogerClavier()
-{
-  char caractere = clavier.getKey()
 
-  if (caractere == "*")
-  {
-    for (i = 0)
-  }
+void TransfoTick()
+{
+  NbrMinutes = (Nombres[0] * 10) + Nombres[1];
+  NbrSecondes = (Nombres[2] * 10) + Nombres[3];
+  Tick = (NbrMinutes * 60) + NbrSecondes;
+  Serial.print("tick: ");
+  Serial.println(Tick);
 }
 
 void TransformerNombre()
@@ -168,30 +210,26 @@ void AppuisBouton (short bouton)
     DernierAppuisBouton = millis();
     switch(bouton)
     {
-      case 3: start != start;
+      case 1: clef = digitalRead(SWITCH_CLEF);
+              //Serial.print("Clef: ");
+              //Serial.println(clef);
               break;
-      default: Tick = 0;
-               if (start)
-               {
-                start != start;
-               }
-               break;          
+      default:  Start = !Start;
+                Serial.print("Start: ");
+                Serial.println(Start);
+                break;        
     }
     TransformerNombre();
   }
 }
 
-
 void AppuisStart()
 {
-  AppuisBouton(3);
+  AppuisBouton(2);
 }
 
-
-
-
-
-
-
-
+void SwitchClef()
+{
+  AppuisBouton(1);
+}
 
