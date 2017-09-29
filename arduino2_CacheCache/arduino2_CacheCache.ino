@@ -64,10 +64,6 @@ unsigned long DerniereSeconde = 0;
 
 void setup() 
 { 
-  // Tous les Serial servent pour les tests de fonctionnement, à supprimer pour utilisation définitive.
-  Serial.begin(9600);
-  Serial.print("Start: ");
-  Serial.println(start);
   int i = 0;
   int j = 0;
   // Anodes et entrées du ls configurés en sortie
@@ -106,8 +102,6 @@ void loop() {
       VerifierDepassement();
       TransformerNombre();
       DerniereSeconde = millis();
-      Serial.print("Secondes: ");
-      Serial.println(SecondesDecompte);
     }
   }
 }
@@ -155,7 +149,6 @@ void VerifierDepassement()
 
 void TransformerNombre ()
 {
-  Serial.println("Transformer nombre");
   int tmpEleve = NombreEleve;
   int tmpSeconde = SecondesDecompte;
 
@@ -178,11 +171,6 @@ void TransformerNombre ()
   //Comptage des unités
   Nombres[1] =  tmpEleve;
   Nombres[3] = tmpSeconde;
-
-  Serial.print(Nombres[0]);
-  Serial.print(Nombres[1]);
-  Serial.print(Nombres[2]);
-  Serial.println(Nombres[3]);
 }
 
 void AppuisBouton (short bouton)
@@ -199,13 +187,9 @@ void AppuisBouton (short bouton)
       case 3: NombreEleve--;
               break;
       case 4: start = !start;
-              Serial.print("Start :");
-              Serial.println(start);
               break;
       default: NombreEleve = 0;
                SecondesDecompte = SECONDES_DECOMPTE;
-               Serial.print("Reset:");
-               Serial.println(SecondesDecompte);
                if (start)
                {
                 start = !start;

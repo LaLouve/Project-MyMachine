@@ -59,13 +59,6 @@ int NombreDroite = 0;
 void setup() 
 {  
   // Tous les Serial servent pour les tests de fonctionnement, à supprimer pour utilisation définitive.
-  Serial.begin(9600);
-  Serial.println(NombreDroite);
-  Serial.println(NombreGauche);
-  Serial.print(Nombres[0]);
-  Serial.print(Nombres[1]);
-  Serial.print(Nombres[2]);
-  Serial.println(Nombres[3]);
   int i = 0;
   int j = 0;
   // Anodes et entrées du ls configurés en sortie
@@ -160,13 +153,6 @@ void TransformerNombre ()
   //Comptage des unités
   Nombres[1] = tmpGauche;
   Nombres[3] = tmpDroite;
-  Serial.println("transformer nombre");
-  Serial.println(NombreDroite);
-  Serial.println(NombreGauche);
-  Serial.print(Nombres[0]);
-  Serial.print(Nombres[1]);
-  Serial.print(Nombres[2]);
-  Serial.println(Nombres[3]);
 }
 
 void AppuisBouton (short bouton)
