@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  * 
  * Projet My Machine
- * arduino n°1: Compteur de Points
+ * arduino n°3: Minuteur principal 
  */
 
 //PARAMETRAGE DES BOUTONS
@@ -81,7 +81,8 @@ int i = 0;
 Keypad clavier = Keypad(makeKeymap(symboles), pinLignes, pinColonnes, LIGNES, COLONNES);
 
 void setup() 
-{  
+{ 
+  Serial.begin(9600); 
   int i = 0;
   int j = 0;
   // Anodes et entrées du ls configurés en sortie
@@ -107,6 +108,7 @@ void loop()
   Clef = digitalRead(SWITCH_CLEF);
   if (Clef)
   {
+    //Serial.println("celf " + Clef);
     AppelClavier();
   }
 
@@ -147,6 +149,7 @@ void AppelClavier()
 
   if (caractere == '*')
   {
+    //Serial.println(caractere);
     Modif = true;
     Start = false;
     AfficheurModif = 0;
@@ -220,6 +223,12 @@ void TransformerNombre()
     Nombres[2] = Nombres[2] + 1;
   }
   Nombres[3] = NbrSecondes;
+
+  Serial.println(" Affichage: ");
+  Serial.println(Nombres[0]);
+  Serial.println(Nombres[1]);
+  Serial.println(Nombres[2]);
+  Serial.println(Nombres[3]);
 }
 
 void AppuisStart()
