@@ -29,14 +29,15 @@
 #define MOTEUR_SENSA_2        8
 #define MOTEUR_SENSB_1        7
 #define MOTEUR_SENSB_2        6
-#define TEMPS_ROTA            1000    //En milisecondes
+#define TEMPS_ROTA_A          525     //En milisecondes
+#define TEMPS_ROTA_B          500     //En milisecondes
 #define DELAI_MIN             10      //En secondes
 #define DELAI_MAX             30      //En secondes
 
 //VARIABLES POUR LE MOTEUR
 unsigned long DernierMoteur = 0;
 unsigned long DernierRota = 0;
-long DelaiMoteur = (random(DELAI_MIN, DELAI_MAX)) * 1000;
+long DelaiMoteur = 2000;  //(random(DELAI_MIN, DELAI_MAX)) * 1000;
 byte EtapeMoteur = 0;
 
 void setup() 
@@ -58,7 +59,36 @@ void setup()
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  if ((millis() - DernierMoteur) > DelaiMoteur)
+  { 
+    if ((EtapeMoteur == 0) || (EtapeMoteur == 3))
+    {
+      //Allumer le moteur dans le sens A
+      Serial.println("Sens A, rotation");
+      digitalWrite(MOTEUR_SENSA_1, LOW);
+      digitalWrite(MOTEUR_SENSA_2, LOW);
+      delay(TEMPS_ROTA_A); //On laisse les moteurs allumés pendant le temps de rotation  
+    }
+    
+    else if ((EtapeMoteur == 1) || (EtapeMoteur == 2))
+    {
+      //Allumer le moteur dans le sens B
+      Serial.println("Sens B, rotation");
+      digitalWrite(MOTEUR_SENSB_1, LOW);
+      digitalWrite(MOTEUR_SENSB_2, LOW);
+      delay(TEMPS_ROTA_B); //On laisse les moteurs allumés pendant le temps de rotation
+    }
 
+    digitalWrite(MOTEUR_SENSA_1, HIGH);
+    digitalWrite(MOTEUR_SENSA_2, HIGH);
+    digitalWrite(MOTEUR_SENSB_1, HIGH);
+    digitalWrite(MOTEUR_SENSB_2, HIGH);
+    //Eteindre tous les moteurs
+
+    EtapeMoteur = (EtapeMoteur + 1) % 4;
+    //DelaiMoteur = (random(DELAI_MIN, DELAI_MAX)) * 1000;
+    Serial.println(DelaiMoteur);
+    DernierMoteur = millis();
+  } 
 }
 
