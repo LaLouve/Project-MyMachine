@@ -37,7 +37,7 @@
 //VARIABLES POUR LE MOTEUR
 unsigned long DernierMoteur = 0;
 unsigned long DernierRota = 0;
-long DelaiMoteur = 2000;  //(random(DELAI_MIN, DELAI_MAX)) * 1000;
+long DelaiMoteur = (random(DELAI_MIN, DELAI_MAX)) * 1000;
 byte EtapeMoteur = 0;
 
 void setup() 
@@ -86,7 +86,7 @@ void loop() {
     //Eteindre tous les moteurs
 
     EtapeMoteur = (EtapeMoteur + 1) % 4;
-    //DelaiMoteur = (random(DELAI_MIN, DELAI_MAX)) * 1000;
+    DelaiMoteur = (random(DELAI_MIN, DELAI_MAX)) * 1000;
     Serial.println(DelaiMoteur);
     DernierMoteur = millis();
   } 
