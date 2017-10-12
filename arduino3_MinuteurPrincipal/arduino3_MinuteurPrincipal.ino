@@ -28,7 +28,7 @@
 
 //PARAMETRAGE DES BOUTONS
 #define BOUTON_START          18
-#define SWITCH_CLEF           19
+#define SWITCH_CLEF           19   // ATTENTION LOGIQUE INVERSE, clef activé à 0. clé connectée à 19 et masse
 #define DELAI_REBONDS         250 //En millisecondes
  
 //PARAMETRAGE AFFICHEURS 7 SEGMENTS
@@ -94,7 +94,7 @@ void setup()
 
   // Configuration des boutons
   pinMode(BOUTON_START, INPUT_PULLUP);
-  pinMode(SWITCH_CLEF, INPUT);
+  pinMode(SWITCH_CLEF, INPUT_PULLUP);
 
   // Configuration des interruptions
 
@@ -106,9 +106,8 @@ void loop()
   RafraichirAffichage();
   
   Clef = digitalRead(SWITCH_CLEF);
-  if (Clef)
+  if (!Clef)
   {
-    //Serial.println("celf " + Clef);
     AppelClavier();
   }
 
